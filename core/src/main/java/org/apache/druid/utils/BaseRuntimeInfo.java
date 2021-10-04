@@ -23,38 +23,77 @@ import org.apache.druid.java.util.common.UOE;
 
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class AbstractRuntimeInfo
+public class BaseRuntimeInfo implements RuntimeInfo
 {
-  public abstract String getProvider();
+  private static final String PROVIDER = "Base";
 
+  @Override
+  public String getProvider()
+  {
+    return PROVIDER;
+  }
+
+  @Override
+  public String getHostId()
+  {
+    return "";
+  }
+
+  @Override
+  public int getTotalProcessors()
+  {
+    return getAvailableProcessors();
+  }
+
+  @Override
   public int getAvailableProcessors()
   {
     return Runtime.getRuntime().availableProcessors();
   }
 
-  public abstract long getCpuPeriod();
+  @Override
+  public long getCpuPeriod()
+  {
+    return 0;
+  }
 
-  public abstract long getCpuQuota();
+  @Override
+  public long getCpuQuota()
+  {
+    return 0;
+  }
 
-  public abstract long getCpuShares();
+  @Override
+  public long getCpuShares()
+  {
+    return -1;
+  }
 
-  public abstract int[] getEffectiveCpuSetCpus();
+  @Override
+  public int[] getEffectiveCpuSetCpus()
+  {
+    return new int[0];
+  }
 
+  @Override
   public long getMaxHeapSizeBytes()
   {
     return Runtime.getRuntime().maxMemory();
   }
 
+  @Override
   public long getTotalHeapSizeBytes()
   {
     return Runtime.getRuntime().totalMemory();
   }
 
+  @Override
   public long getFreeHeapSizeBytes()
   {
     return Runtime.getRuntime().freeMemory();
   }
 
+  @Override
   public long getDirectMemorySizeBytes()
   {
     try {

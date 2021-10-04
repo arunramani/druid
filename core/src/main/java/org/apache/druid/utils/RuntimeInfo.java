@@ -19,37 +19,29 @@
 
 package org.apache.druid.utils;
 
-public class RuntimeInfo extends AbstractRuntimeInfo
+public interface RuntimeInfo
 {
-  private static final String PROVIDER = "Default";
+  String getProvider();
 
-  @Override
-  public String getProvider()
-  {
-    return PROVIDER;
-  }
+  String getHostId();
 
-  @Override
-  public long getCpuPeriod()
-  {
-    return 0L;
-  }
+  int getTotalProcessors();
 
-  @Override
-  public long getCpuQuota()
-  {
-    return 0L;
-  }
+  int getAvailableProcessors();
 
-  @Override
-  public long getCpuShares()
-  {
-    return -1L;
-  }
+  long getCpuPeriod();
 
-  @Override
-  public int[] getEffectiveCpuSetCpus()
-  {
-    return new int[0];
-  }
+  long getCpuQuota();
+
+  long getCpuShares();
+
+  int[] getEffectiveCpuSetCpus();
+
+  long getMaxHeapSizeBytes();
+
+  long getTotalHeapSizeBytes();
+
+  long getFreeHeapSizeBytes();
+
+  long getDirectMemorySizeBytes();
 }

@@ -68,4 +68,4 @@ USER druid
 VOLUME /opt/druid/var
 WORKDIR /opt/druid
 
-ENTRYPOINT ["/druid.sh"]
+ENTRYPOINT ["/bin/start-micro-quickstart"]

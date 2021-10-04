@@ -31,27 +31,23 @@ import org.apache.druid.java.util.metrics.cgroups.ProcSelfCgroupDiscoverer;
  * NOTE: Since these values are essentially immutable after the process starts,
  * the constructor takes a snapshot of the values and stores it locally.
  */
-public class CgroupAwareRuntimeInfo extends AbstractRuntimeInfo
+public class CgroupAwareRuntimeInfo extends BaseRuntimeInfo
 {
   private static final String PROVIDER = "cgroupv1";
   private final Cpu.CpuAllocationMetric cpuAllocationMetric;
   private final CpuSet.CpuSetMetric cpuSetMetric;
   private final int processorCount;
+  private final String bootId;
 
   public CgroupAwareRuntimeInfo()
   {
-    // If there's no proc dir, then there's no hope of finding /sys/fs either
-    // so just emit default values.
-    if (!ProcFsReader.DEFAULT_PROC_FS_ROOT.toFile().isDirectory()) {
-      this.cpuAllocationMetric = Cpu.CpuAllocationMetric.DEFAULT;
-      this.cpuSetMetric = CpuSet.CpuSetMetric.DEFAULT;
-      this.processorCount = JvmUtils.getRuntimeInfo().getAvailableProcessors();
-    } else {
-      CgroupDiscoverer cgroupDiscoverer = new ProcSelfCgroupDiscoverer();
-      this.cpuAllocationMetric = new Cpu(cgroupDiscoverer).snapshot();
-      this.cpuSetMetric = new CpuSet(cgroupDiscoverer).snapshot();
-      this.processorCount = Math.toIntExact(new ProcFsReader(ProcFsReader.DEFAULT_PROC_FS_ROOT).getProcessorCount());
-    }
+    CgroupDiscoverer cgroupDiscoverer = new ProcSelfCgroupDiscoverer();
+    this.cpuAllocationMetric = new Cpu(cgroupDiscoverer).snapshot();
+    this.cpuSetMetric = new CpuSet(cgroupDiscoverer).snapshot();
+
+    ProcFsReader procFsReader = new ProcFsReader(ProcFsReader.DEFAULT_PROC_FS_ROOT);
+    this.processorCount = Math.toIntExact(procFsReader.getProcessorCount());
+    this.bootId = procFsReader.getBootId().toString();
   }
 
   @Override
@@ -61,9 +57,21 @@ public class CgroupAwareRuntimeInfo extends AbstractRuntimeInfo
   }
 
   @Override
-  public int getAvailableProcessors()
+  public String getHostId()
+  {
+    return this.bootId;
+  }
+
+  @Override
+  public int getTotalProcessors()
   {
     return this.processorCount;
+  }
+
+  @Override
+  public int getAvailableProcessors()
+  {
+    return (int) Math.ceil((double) this.getCpuQuota() / this.getCpuPeriod());
   }
 
   @Override
