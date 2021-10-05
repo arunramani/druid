@@ -22,6 +22,7 @@ package org.apache.druid.utils;
 import org.apache.druid.java.util.common.UOE;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 public class BaseRuntimeInfo implements RuntimeInfo
 {
@@ -34,9 +35,9 @@ public class BaseRuntimeInfo implements RuntimeInfo
   }
 
   @Override
-  public String getHostId()
+  public UUID getBootUUID()
   {
-    return "";
+    return null;
   }
 
   @Override

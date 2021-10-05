@@ -25,6 +25,8 @@ import org.apache.druid.java.util.metrics.cgroups.Cpu;
 import org.apache.druid.java.util.metrics.cgroups.CpuSet;
 import org.apache.druid.java.util.metrics.cgroups.ProcSelfCgroupDiscoverer;
 
+import java.util.UUID;
+
 /**
  * A container-aware utility class for finer details on CPU allocations.
  * <p>
@@ -37,7 +39,7 @@ public class CgroupAwareRuntimeInfo extends BaseRuntimeInfo
   private final Cpu.CpuAllocationMetric cpuAllocationMetric;
   private final CpuSet.CpuSetMetric cpuSetMetric;
   private final int processorCount;
-  private final String bootId;
+  private final UUID bootId;
 
   public CgroupAwareRuntimeInfo()
   {
@@ -47,7 +49,7 @@ public class CgroupAwareRuntimeInfo extends BaseRuntimeInfo
 
     ProcFsReader procFsReader = new ProcFsReader(ProcFsReader.DEFAULT_PROC_FS_ROOT);
     this.processorCount = Math.toIntExact(procFsReader.getProcessorCount());
-    this.bootId = procFsReader.getBootId().toString();
+    this.bootId = procFsReader.getBootId();
   }
 
   @Override
@@ -57,7 +59,7 @@ public class CgroupAwareRuntimeInfo extends BaseRuntimeInfo
   }
 
   @Override
-  public String getHostId()
+  public UUID getBootUUID()
   {
     return this.bootId;
   }

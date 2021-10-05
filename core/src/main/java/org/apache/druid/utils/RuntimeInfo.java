@@ -19,11 +19,13 @@
 
 package org.apache.druid.utils;
 
+import java.util.UUID;
+
 public interface RuntimeInfo
 {
   String getProvider();
 
-  String getHostId();
+  UUID getBootUUID();
 
   int getTotalProcessors();
 

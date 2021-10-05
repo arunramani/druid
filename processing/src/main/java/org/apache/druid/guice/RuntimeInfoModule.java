@@ -21,7 +21,6 @@ package org.apache.druid.guice;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.apache.druid.java.util.common.logger.Logger;
 import org.apache.druid.java.util.metrics.ProcFsReader;
 import org.apache.druid.utils.BaseRuntimeInfo;
 import org.apache.druid.utils.CgroupAwareRuntimeInfo;
@@ -29,17 +28,13 @@ import org.apache.druid.utils.RuntimeInfo;
 
 public class RuntimeInfoModule implements Module
 {
-  private static final Logger LOG = new Logger(RuntimeInfoModule.class);
-
   @Override
   public void configure(Binder binder)
   {
-    if (!ProcFsReader.DEFAULT_PROC_FS_ROOT.toFile().isDirectory()) {
-      LOG.error("default");
-      binder.bind(RuntimeInfo.class).toInstance(new BaseRuntimeInfo());
-    } else {
-      LOG.error("cgroup");
-      binder.bind(RuntimeInfo.class).toInstance(new CgroupAwareRuntimeInfo());
-    }
+    binder.bind(RuntimeInfo.class).to(
+        ProcFsReader.DEFAULT_PROC_FS_ROOT.toFile().isDirectory()
+        ? CgroupAwareRuntimeInfo.class
+        : BaseRuntimeInfo.class
+    );
   }
 }
