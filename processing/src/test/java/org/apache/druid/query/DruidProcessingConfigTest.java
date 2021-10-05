@@ -24,6 +24,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.druid.java.util.common.IAE;
 import org.apache.druid.java.util.common.config.Config;
+import org.apache.druid.utils.BaseRuntimeInfo;
 import org.apache.druid.utils.JvmUtils;
 import org.apache.druid.utils.RuntimeInfo;
 import org.hamcrest.CoreMatchers;
@@ -188,7 +189,7 @@ public class DruidProcessingConfigTest
     config.intermediateComputeSizeBytes();
   }
 
-  static class MockRuntimeInfo extends RuntimeInfo
+  static class MockRuntimeInfo extends BaseRuntimeInfo
   {
     private final int availableProcessors;
     private final long maxHeapSize;

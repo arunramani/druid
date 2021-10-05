@@ -52,7 +52,7 @@ public class JvmUtils
   }
 
   @Inject
-  private static RuntimeInfo runtimeInfo = new RuntimeInfo();
+  private static RuntimeInfo runtimeInfo = new BaseRuntimeInfo();
 
   public static RuntimeInfo getRuntimeInfo()
   {

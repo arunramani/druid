@@ -19,55 +19,31 @@
 
 package org.apache.druid.utils;
 
-import org.apache.druid.java.util.common.UOE;
+import java.util.UUID;
 
-import java.lang.reflect.InvocationTargetException;
-
-public class RuntimeInfo
+public interface RuntimeInfo
 {
-  public int getAvailableProcessors()
-  {
-    return Runtime.getRuntime().availableProcessors();
-  }
+  String getProvider();
 
-  public long getMaxHeapSizeBytes()
-  {
-    return Runtime.getRuntime().maxMemory();
-  }
+  UUID getBootUUID();
 
-  public long getTotalHeapSizeBytes()
-  {
-    return Runtime.getRuntime().totalMemory();
-  }
+  int getTotalProcessors();
 
-  public long getFreeHeapSizeBytes()
-  {
-    return Runtime.getRuntime().freeMemory();
-  }
+  int getAvailableProcessors();
 
-  public long getDirectMemorySizeBytes()
-  {
-    try {
-      Class<?> vmClass = Class.forName("sun.misc.VM");
-      Object maxDirectMemoryObj = vmClass.getMethod("maxDirectMemory").invoke(null);
+  long getCpuPeriod();
 
-      if (maxDirectMemoryObj == null || !(maxDirectMemoryObj instanceof Number)) {
-        throw new UOE("Cannot determine maxDirectMemory from [%s]", maxDirectMemoryObj);
-      } else {
-        return ((Number) maxDirectMemoryObj).longValue();
-      }
-    }
-    catch (ClassNotFoundException e) {
-      throw new UnsupportedOperationException("No VM class, cannot do memory check.", e);
-    }
-    catch (NoSuchMethodException e) {
-      throw new UnsupportedOperationException("VM.maxDirectMemory doesn't exist, cannot do memory check.", e);
-    }
-    catch (InvocationTargetException e) {
-      throw new UnsupportedOperationException("static method shouldn't throw this", e);
-    }
-    catch (IllegalAccessException e) {
-      throw new UnsupportedOperationException("public method, shouldn't throw this", e);
-    }
-  }
+  long getCpuQuota();
+
+  long getCpuShares();
+
+  int[] getEffectiveCpuSetCpus();
+
+  long getMaxHeapSizeBytes();
+
+  long getTotalHeapSizeBytes();
+
+  long getFreeHeapSizeBytes();
+
+  long getDirectMemorySizeBytes();
 }

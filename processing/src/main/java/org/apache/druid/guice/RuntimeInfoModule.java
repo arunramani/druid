@@ -21,6 +21,9 @@ package org.apache.druid.guice;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.apache.druid.java.util.metrics.ProcFsReader;
+import org.apache.druid.utils.BaseRuntimeInfo;
+import org.apache.druid.utils.CgroupAwareRuntimeInfo;
 import org.apache.druid.utils.RuntimeInfo;
 
 public class RuntimeInfoModule implements Module
@@ -28,6 +31,10 @@ public class RuntimeInfoModule implements Module
   @Override
   public void configure(Binder binder)
   {
-    binder.requestStaticInjection(RuntimeInfo.class);
+    binder.bind(RuntimeInfo.class).to(
+        ProcFsReader.DEFAULT_PROC_FS_ROOT.toFile().isDirectory()
+        ? CgroupAwareRuntimeInfo.class
+        : BaseRuntimeInfo.class
+    );
   }
 }
