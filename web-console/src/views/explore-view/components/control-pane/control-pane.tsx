@@ -30,7 +30,6 @@ import { IconNames } from '@blueprintjs/icons';
 import type { Column, SqlExpression } from '@druid-toolkit/query';
 import { SqlColumn } from '@druid-toolkit/query';
 import type { JSX } from 'react';
-import React from 'react';
 
 import {
   AutoForm,
@@ -221,6 +220,7 @@ export const ControlPane = function ControlPane(props: ControlPaneProps) {
           : filterMap(effectiveValue as ExpressionMeta[], ({ expression }) =>
               expression instanceof SqlColumn ? expression.getName() : undefined,
             );
+
         return {
           element: (
             <NamedExpressionsInput<ExpressionMeta>
@@ -295,6 +295,10 @@ export const ControlPane = function ControlPane(props: ControlPaneProps) {
       }
 
       case 'measures': {
+        const disabledMeasureNames = parameter.allowDuplicates
+          ? []
+          : filterMap(effectiveValue as Measure[], measure => measure.getAggregateMeasureName());
+
         return {
           element: (
             <NamedExpressionsInput<Measure>
@@ -307,6 +311,7 @@ export const ControlPane = function ControlPane(props: ControlPaneProps) {
                   columns={columns}
                   measures={measures}
                   initMeasure={initMeasure}
+                  disabledMeasureNames={disabledMeasureNames}
                   onSelectMeasure={m => onValueChange(changeOrAdd(effectiveValue, initMeasure, m))}
                   onClose={onClose}
                   onAddToSourceQueryAsMeasure={onAddToSourceQueryAsMeasure}
@@ -350,6 +355,7 @@ export const ControlPane = function ControlPane(props: ControlPaneProps) {
         if (visible === false) return;
 
         const value = parameterValues[name];
+
         function onValueChange(newValue: unknown) {
           onUpdateParameterValues({ [name]: newValue });
         }
